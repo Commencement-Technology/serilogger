@@ -1,79 +1,79 @@
-import {LogEventLevel, LogEventLevelSwitch, isEnabled} from './logEvent';
-import {FilterStage} from './filterStage';
+import { FilterStage } from './filterStage';
+import { LogEventLevel, LogEventLevelSwitch, isEnabled } from './logEvent';
 
 /**
  * Allows dynamic control of the logging level.
  */
 export class DynamicLevelSwitch implements LogEventLevelSwitch<Promise<any>> {
-    private minLevel?: LogEventLevel;
+	private minLevel?: LogEventLevel;
 
-    constructor(defaultLevel?: LogEventLevel) {
-        this.minLevel = defaultLevel
-    }
+	constructor(defaultLevel?: LogEventLevel) {
+		this.minLevel = defaultLevel
+	}
 
-    /**
-     * Gets or sets a delegate that can be called when the pipeline needs to be flushed.
-     * This should generally not be modified, as it will be provided by the pipeline stage.
-     */
-    flushDelegate: () => Promise<any> = () => Promise.resolve();
+	/**
+	 * Gets or sets a delegate that can be called when the pipeline needs to be flushed.
+	 * This should generally not be modified, as it will be provided by the pipeline stage.
+	 */
+	flushDelegate: () => Promise<any> = () => Promise.resolve();
 
-    async fatal() {
-        await this.flushDelegate();
-        return this.minLevel = LogEventLevel.fatal;
-    }
+	async fatal() {
+		await this.flushDelegate();
+		return this.minLevel = LogEventLevel.fatal;
+	}
 
-    async error() {
-        await this.flushDelegate();
-        return this.minLevel = LogEventLevel.error;
-    }
+	async error() {
+		await this.flushDelegate();
+		return this.minLevel = LogEventLevel.error;
+	}
 
-    async warning() {
-        await this.flushDelegate();
-        return this.minLevel = LogEventLevel.warning;
-    }
+	async warning() {
+		await this.flushDelegate();
+		return this.minLevel = LogEventLevel.warning;
+	}
 
-    async information() {
-        await this.flushDelegate();
-        return this.minLevel = LogEventLevel.information;
-    }
+	async information() {
+		await this.flushDelegate();
+		return this.minLevel = LogEventLevel.information;
+	}
 
-    async debug() {
-        await this.flushDelegate();
-        return this.minLevel = LogEventLevel.debug;
-    }
+	async debug() {
+		await this.flushDelegate();
+		return this.minLevel = LogEventLevel.debug;
+	}
 
-    async verbose() {
-        await this.flushDelegate();
-        return this.minLevel = LogEventLevel.verbose;
-    }
+	async verbose() {
+		await this.flushDelegate();
+		return this.minLevel = LogEventLevel.verbose;
+	}
 
-    async off() {
-        await this.flushDelegate();
-        return this.minLevel = LogEventLevel.off;
-    }
+	async off() {
+		await this.flushDelegate();
+		return this.minLevel = LogEventLevel.off;
+	}
 
-    async set(level: LogEventLevel) {
-        await this.flushDelegate();
-        return this.minLevel = level;
-    }
+	async set(level: LogEventLevel) {
+		await this.flushDelegate();
+		return this.minLevel = level;
+	}
 
-    isEnabled(level: LogEventLevel): boolean {
-        return this.minLevel === undefined || isEnabled(this.minLevel, level);
-    }
+	isEnabled(level: LogEventLevel): boolean {
+		return this.minLevel === undefined || isEnabled(this.minLevel, level);
+	}
 }
 
 export class DynamicLevelSwitchStage extends FilterStage {
-    private dynamicLevelSwitch: DynamicLevelSwitch;
+	private dynamicLevelSwitch: DynamicLevelSwitch;
 
-    /**
-     * Sets a delegate that can be called when the pipeline needs to be flushed.
-     */
-    setFlushDelegate(flushDelegate: () => Promise<any>) {
-        this.dynamicLevelSwitch.flushDelegate = flushDelegate;
-    }
+	/**
+	 * Sets a delegate that can be called when the pipeline needs to be flushed.
+	 */
+	setFlushDelegate(flushDelegate: () => Promise<any>) {
+		this.dynamicLevelSwitch.flushDelegate = flushDelegate;
+	}
 
-    constructor(dynamicLevelSwitch: DynamicLevelSwitch) {
-        super(e => dynamicLevelSwitch.isEnabled(e.level));
-        this.dynamicLevelSwitch = dynamicLevelSwitch;
-    }
+	constructor(dynamicLevelSwitch: DynamicLevelSwitch) {
+		super(e => dynamicLevelSwitch.isEnabled(e.level));
+		this.dynamicLevelSwitch = dynamicLevelSwitch;
+	}
 }

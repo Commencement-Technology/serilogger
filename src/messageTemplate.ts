@@ -92,7 +92,7 @@ export class MessageTemplate {
     private tokenize(template: string): Token[] {
         const tokens = [];
 
-        let result;
+        let result: RegExpExecArray | null;
         let textStart = 0;
 
         while ((result = tokenizer.exec(template)) !== null) {
