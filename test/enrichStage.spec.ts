@@ -1,8 +1,5 @@
-/// <reference path="../node_modules/@types/node/index.d.ts" />
 /// <reference path="../node_modules/@types/jest/index.d.ts" />
-/// <reference path="../node_modules/typemoq/dist/typemoq.d.ts" />
 
-import { expect } from 'chai';
 import { EnrichStage } from '../src/enrichStage';
 import { LogEvent, LogEventLevel } from '../src/logEvent';
 import { MessageTemplate } from '../src/messageTemplate';
@@ -16,9 +13,9 @@ describe('EnrichStage', () => {
 			new LogEvent('', LogEventLevel.information, new MessageTemplate('Message 2'), { a: 1 })
 		];
 		const enrichedEvents = enrichStage.emit(events);
-		expect(enrichedEvents).to.have.length(2);
-		expect(enrichedEvents[0]).to.have.nested.property('properties.b', 2);
-		expect(enrichedEvents[1]).to.have.nested.property('properties.b', 2);
+		expect(enrichedEvents).toHaveLength(2);
+		expect(enrichedEvents[0]).toHaveProperty('properties.b', 2);
+		expect(enrichedEvents[1]).toHaveProperty('properties.b', 2);
 	});
 
 	it('passes the event properties to the enricher to allow conditional masking', () => {
@@ -35,11 +32,11 @@ describe('EnrichStage', () => {
 			new LogEvent('', LogEventLevel.information, new MessageTemplate('Message 1'), { a: 1, password: 'secret', url: 'testUrl' }),
 		];
 		const enrichedEvents = enrichStage.emit(events);
-		expect(enrichedEvents).to.have.length(1);
-		expect(enrichedEvents[0]).to.have.nested.property('properties.password', 'REDACTED');
-		expect(enrichedEvents[0]).to.have.nested.property('properties.a', 1);
-		expect(enrichedEvents[0]).to.have.nested.property('properties.url', 'testUrl');
-		expect(enrichedEvents[0]).to.have.nested.property('properties.url2', 'testUrl2');
+		expect(enrichedEvents).toHaveLength(1);
+		expect(enrichedEvents[0]).toHaveProperty('properties.password', 'REDACTED');
+		expect(enrichedEvents[0]).toHaveProperty('properties.a', 1);
+		expect(enrichedEvents[0]).toHaveProperty('properties.url', 'testUrl');
+		expect(enrichedEvents[0]).toHaveProperty('properties.url2', 'testUrl2');
 	});
 
 	it('does not allow direct manipulation of the event properties', () => {
@@ -52,8 +49,8 @@ describe('EnrichStage', () => {
 			new LogEvent('', LogEventLevel.information, new MessageTemplate('Message 1'), { password: 'secret' }),
 		];
 		const enrichedEvents = enrichStage.emit(events);
-		expect(enrichedEvents).to.have.length(1);
-		expect(enrichedEvents[0]).to.have.nested.property('properties.password', 'secret');
+		expect(enrichedEvents).toHaveLength(1);
+		expect(enrichedEvents[0]).toHaveProperty('properties.password', 'secret');
 	});
 
 	it('enriches events with properties from a plain object', () => {
@@ -64,9 +61,9 @@ describe('EnrichStage', () => {
 			new LogEvent('', LogEventLevel.information, new MessageTemplate('Message 2'), { a: 1 })
 		];
 		const enrichedEvents = enrichStage.emit(events);
-		expect(enrichedEvents).to.have.length(2);
-		expect(enrichedEvents[0]).to.have.nested.property('properties.b', 2);
-		expect(enrichedEvents[1]).to.have.nested.property('properties.b', 2);
+		expect(enrichedEvents).toHaveLength(2);
+		expect(enrichedEvents[0]).toHaveProperty('properties.b', 2);
+		expect(enrichedEvents[1]).toHaveProperty('properties.b', 2);
 	});
 
 	it('does nothing when flushed', () => {

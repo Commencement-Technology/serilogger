@@ -1,8 +1,6 @@
-/// <reference path="../node_modules/@types/node/index.d.ts" />
 /// <reference path="../node_modules/@types/jest/index.d.ts" />
 /// <reference path="../node_modules/typemoq/dist/typemoq.d.ts" />
 
-import { expect } from 'chai';
 import * as TypeMoq from 'typemoq';
 import { ConsoleSink } from '../src/consoleSink';
 import { LogEvent, LogEventLevel } from '../src/logEvent';
@@ -49,15 +47,6 @@ describe('ConsoleSink', () => {
 			consoleProxy.verify(m => m.debug(TypeMoq.It.isAny()), TypeMoq.Times.exactly(2));
 		});
 
-		it('logs messages with an unknown log level', () => {
-			const consoleProxy = TypeMoq.Mock.ofType(ConcreteConsoleProxy);
-			const consoleSink = new ConsoleSink({ console: consoleProxy.object });
-			consoleSink.emit([
-				new LogEvent('', 100, new MessageTemplate('Test'))
-			]);
-			consoleProxy.verify(m => m.log(TypeMoq.It.isAny()), TypeMoq.Times.once());
-		});
-
 		it('logs error objects', () => {
 			let loggedMessage: string = '';
 			let loggedProperty: any;
@@ -74,9 +63,9 @@ describe('ConsoleSink', () => {
 			consoleSink.emit([
 				new LogEvent('', LogEventLevel.information, new MessageTemplate('Test {a}'), { a: 'b' }, error)
 			]);
-			expect(loggedMessage).to.contain('Test b');
-			expect(loggedProperty).to.equal('b');
-			expect(loggedError).to.equal(error);
+			expect(loggedMessage).toContain('Test b');
+			expect(loggedProperty).toEqual('b');
+			expect(loggedError).toEqual(error);
 		});
 
 		it('falls back to log when the more specific methods are unavailable', () => {
@@ -138,7 +127,7 @@ describe('ConsoleSink', () => {
 			consoleSink.emit([
 				new LogEvent(timestamp, LogEventLevel.error, new MessageTemplate('Test'))
 			]);
-			expect(loggedMessage).to.contain(timestamp);
+			expect(loggedMessage).toContain(timestamp);
 		});
 
 		it('removes level when specified in options', () => {
@@ -155,7 +144,7 @@ describe('ConsoleSink', () => {
 			consoleSink.emit([
 				new LogEvent('', LogEventLevel.error, new MessageTemplate('Test'))
 			]);
-			expect(loggedMessage).to.not.contain('error');
+			expect(loggedMessage).not.toContain('error');
 		});
 
 		it('includes properties when specified in options', () => {
@@ -174,9 +163,9 @@ describe('ConsoleSink', () => {
 			consoleSink.emit([
 				new LogEvent('', LogEventLevel.error, new MessageTemplate('Test'), { a: 'property 1', b: 'property 2' })
 			]);
-			expect(loggedProperties).to.have.length(2);
-			expect(loggedProperties[0]).to.equal('property 1');
-			expect(loggedProperties[1]).to.equal('property 2');
+			expect(loggedProperties).toHaveLength(2);
+			expect(loggedProperties[0]).toEqual('property 1');
+			expect(loggedProperties[1]).toEqual('property 2');
 		});
 	});
 

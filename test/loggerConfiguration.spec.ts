@@ -1,8 +1,6 @@
-/// <reference path="../node_modules/@types/node/index.d.ts" />
 /// <reference path="../node_modules/@types/jest/index.d.ts" />
 /// <reference path="../node_modules/typemoq/dist/typemoq.d.ts" />
 
-import { expect } from 'chai';
 import * as TypeMoq from 'typemoq';
 import { DynamicLevelSwitch } from '../src/dynamicLevelSwitch';
 import { LogEventLevel } from '../src/logEvent';
@@ -19,7 +17,7 @@ describe('LoggerConfiguration', () => {
 		it('creates a new logger instance', () => {
 			const loggerConfiguration = new LoggerConfiguration();
 			const logger = loggerConfiguration.create();
-			expect(logger).to.be.instanceof(Logger);
+			expect(logger).toBeInstanceOf(Logger);
 		});
 	});
 
@@ -29,28 +27,28 @@ describe('LoggerConfiguration', () => {
 			const invalidBaseName = {
 				invalid: {}
 			};
-			expect(() => loggerConfiguration.readFromConfiguration(invalidBaseName)).to.throw('Argument "config" must contain a property of "serilogger"');
+			expect(() => loggerConfiguration.readFromConfiguration(invalidBaseName)).toThrow('Argument "config" must contain a property of "serilogger"');
 
 			const invalidProperty = {
 				serilogger: {
 					badProperty: []
 				}
 			};
-			expect(() => loggerConfiguration.readFromConfiguration(invalidProperty)).to.throw('Argument "config" must contain a sub-property of "writeTo"');
+			expect(() => loggerConfiguration.readFromConfiguration(invalidProperty)).toThrow('Argument "config" must contain a sub-property of "writeTo"');
 
 			const writeToNotAnArray = {
 				serilogger: {
 					writeTo: 'INVALID'
 				}
 			};
-			expect(() => loggerConfiguration.readFromConfiguration(writeToNotAnArray)).to.throw('"writeTo" property must be an Array');
+			expect(() => loggerConfiguration.readFromConfiguration(writeToNotAnArray)).toThrow('"writeTo" property must be an Array');
 
 			const writeToArrayEmpty = {
 				serilogger: {
 					writeTo: []
 				}
 			};
-			expect(() => loggerConfiguration.readFromConfiguration(writeToArrayEmpty)).to.throw('"writeTo" property must have at least one element');
+			expect(() => loggerConfiguration.readFromConfiguration(writeToArrayEmpty)).toThrow('"writeTo" property must have at least one element');
 		});
 
 		it('adds a base ConsoleSink', () => {
@@ -66,12 +64,12 @@ describe('LoggerConfiguration', () => {
 			};
 			loggerConfiguration = loggerConfiguration.readFromConfiguration(config);
 			const sinks: PipelineStage[] = loggerConfiguration['_sinks'];
-			expect(sinks.length).to.equal(1);
+			expect(sinks.length).toEqual(1);
 			const consoleSink = (sinks as SinkStage[])[0]['sink'] as ConsoleSink;
 
-			expect(consoleSink['options'].includeProperties).to.equal(defaultConsoleSinkOptions.includeProperties);
-			expect(consoleSink['options'].includeTimestamps).to.equal(defaultConsoleSinkOptions.includeTimestamps);
-			expect(consoleSink['options'].removeLogLevelPrefix).to.equal(defaultConsoleSinkOptions.removeLogLevelPrefix);
+			expect(consoleSink['options'].includeProperties).toEqual(defaultConsoleSinkOptions.includeProperties);
+			expect(consoleSink['options'].includeTimestamps).toEqual(defaultConsoleSinkOptions.includeTimestamps);
+			expect(consoleSink['options'].removeLogLevelPrefix).toEqual(defaultConsoleSinkOptions.removeLogLevelPrefix);
 		});
 
 		it('adds a configured ConsoleSink', () => {
@@ -92,12 +90,12 @@ describe('LoggerConfiguration', () => {
 			};
 			loggerConfiguration = loggerConfiguration.readFromConfiguration(config);
 			const sinks: PipelineStage[] = loggerConfiguration['_sinks'];
-			expect(sinks.length).to.equal(1);
+			expect(sinks.length).toEqual(1);
 			const consoleSink = (sinks as SinkStage[])[0]['sink'] as ConsoleSink;
 
-			expect(consoleSink['options'].includeProperties).to.equal(true);
-			expect(consoleSink['options'].includeTimestamps).to.equal(true);
-			expect(consoleSink['options'].removeLogLevelPrefix).to.equal(true);
+			expect(consoleSink['options'].includeProperties).toEqual(true);
+			expect(consoleSink['options'].includeTimestamps).toEqual(true);
+			expect(consoleSink['options'].removeLogLevelPrefix).toEqual(true);
 		});
 	});
 
@@ -116,15 +114,15 @@ describe('LoggerConfiguration', () => {
 			logger.info('C is the third letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents[0]).to.have.nested.property('properties.c', 3);
-				expect(emittedEvents[0]).to.have.nested.property('properties.d', 4);
+				expect(emittedEvents[0]).toHaveProperty('properties.c', 3);
+				expect(emittedEvents[0]).toHaveProperty('properties.d', 4);
 			});
 		});
 
 		it('requires an enricher to be provided', () => {
 			const loggerConfiguration = new LoggerConfiguration();
-			expect(() => loggerConfiguration.enrich(undefined)).to.throw();
-			expect(() => loggerConfiguration.enrich(null)).to.throw();
+			expect(() => loggerConfiguration.enrich(undefined)).toThrow();
+			expect(() => loggerConfiguration.enrich(null)).toThrow();
 		});
 	});
 
@@ -145,23 +143,23 @@ describe('LoggerConfiguration', () => {
 			logger.info('D is the fourth letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents).to.have.length(1);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'C is the third letter');
+				expect(emittedEvents).toHaveLength(1);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'C is the third letter');
 			});
 		});
 
 		it('requires a filter to be provided', () => {
 			const loggerConfiguration = new LoggerConfiguration();
-			expect(() => loggerConfiguration.filter(undefined)).to.throw();
-			expect(() => loggerConfiguration.filter(null)).to.throw();
+			expect(() => loggerConfiguration.filter(undefined)).toThrow();
+			expect(() => loggerConfiguration.filter(null)).toThrow();
 		});
 	});
 
 	describe('minLevel()', () => {
 		it('throws if no level or switch is provided', () => {
 			const loggerConfiguration = new LoggerConfiguration();
-			expect(() => loggerConfiguration.minLevel(undefined)).to.throw();
-			expect(() => loggerConfiguration.minLevel(null)).to.throw();
+			expect(() => loggerConfiguration.minLevel(undefined)).toThrow();
+			expect(() => loggerConfiguration.minLevel(null)).toThrow();
 		});
 
 		it('sets the minimum level', () => {
@@ -179,9 +177,9 @@ describe('LoggerConfiguration', () => {
 			logger.info('C is the third letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents).to.have.length(2);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'A is the first letter');
-				expect(emittedEvents[1]).to.have.nested.property('messageTemplate.raw', 'C is the third letter');
+				expect(emittedEvents).toHaveLength(2);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'A is the first letter');
+				expect(emittedEvents[1]).toHaveProperty('messageTemplate.raw', 'C is the third letter');
 			});
 		});
 
@@ -201,9 +199,9 @@ describe('LoggerConfiguration', () => {
 			logger.warn('D is the fourth letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents).to.have.length(2);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'A is the first letter');
-				expect(emittedEvents[1]).to.have.nested.property('messageTemplate.raw', 'D is the fourth letter');
+				expect(emittedEvents).toHaveLength(2);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'A is the first letter');
+				expect(emittedEvents[1]).toHaveProperty('messageTemplate.raw', 'D is the fourth letter');
 			});
 		});
 
@@ -222,15 +220,15 @@ describe('LoggerConfiguration', () => {
 			logger.info('C is the third letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents).to.have.length(2);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'A is the first letter');
-				expect(emittedEvents[1]).to.have.nested.property('messageTemplate.raw', 'B is the second letter');
+				expect(emittedEvents).toHaveLength(2);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'A is the first letter');
+				expect(emittedEvents[1]).toHaveProperty('messageTemplate.raw', 'B is the second letter');
 			});
 		});
 
 		it('throws if an invalid label is provided', () => {
 			const loggerConfiguration = new LoggerConfiguration();
-			expect(() => loggerConfiguration.minLevel('oogabooga')).to.throw();
+			expect(() => loggerConfiguration.minLevel('oogabooga')).toThrow();
 		});
 
 		it('sets the specified dynamic switch', () => {
@@ -254,10 +252,10 @@ describe('LoggerConfiguration', () => {
 				})
 				.then(() => logger.flush())
 				.then(() => {
-					expect(emittedEvents).to.have.length(3);
-					expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'A is the first letter');
-					expect(emittedEvents[1]).to.have.nested.property('messageTemplate.raw', 'B is the second letter');
-					expect(emittedEvents[2]).to.have.nested.property('messageTemplate.raw', 'D is the fourth letter');
+					expect(emittedEvents).toHaveLength(3);
+					expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'A is the first letter');
+					expect(emittedEvents[1]).toHaveProperty('messageTemplate.raw', 'B is the second letter');
+					expect(emittedEvents[2]).toHaveProperty('messageTemplate.raw', 'D is the fourth letter');
 				});
 		});
 
@@ -275,8 +273,8 @@ describe('LoggerConfiguration', () => {
 			logger.fatal('B is the second letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents).to.have.length(1);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'B is the second letter');
+				expect(emittedEvents).toHaveLength(1);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'B is the second letter');
 			});
 		});
 
@@ -294,8 +292,8 @@ describe('LoggerConfiguration', () => {
 			logger.error('B is the second letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents).to.have.length(1);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'B is the second letter');
+				expect(emittedEvents).toHaveLength(1);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'B is the second letter');
 			});
 		});
 
@@ -313,8 +311,8 @@ describe('LoggerConfiguration', () => {
 			logger.warn('B is the second letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents).to.have.length(1);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'B is the second letter');
+				expect(emittedEvents).toHaveLength(1);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'B is the second letter');
 			});
 		});
 
@@ -332,8 +330,8 @@ describe('LoggerConfiguration', () => {
 			logger.info('B is the second letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents).to.have.length(1);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'B is the second letter');
+				expect(emittedEvents).toHaveLength(1);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'B is the second letter');
 			});
 		});
 
@@ -351,8 +349,8 @@ describe('LoggerConfiguration', () => {
 			logger.debug('B is the second letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents).to.have.length(1);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'B is the second letter');
+				expect(emittedEvents).toHaveLength(1);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'B is the second letter');
 			});
 		});
 
@@ -370,9 +368,9 @@ describe('LoggerConfiguration', () => {
 			logger.debug('B is the second letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents).to.have.length(2);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'A is the first letter');
-				expect(emittedEvents[1]).to.have.nested.property('messageTemplate.raw', 'B is the second letter');
+				expect(emittedEvents).toHaveLength(2);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'A is the first letter');
+				expect(emittedEvents[1]).toHaveProperty('messageTemplate.raw', 'B is the second letter');
 			});
 		});
 	});
@@ -387,8 +385,8 @@ describe('LoggerConfiguration', () => {
 				.suppressErrors()
 				.create();
 
-			expect(logger1.suppressErrors).to.be.true;
-			expect(logger2.suppressErrors).to.be.true;
+			expect(logger1.suppressErrors).toBeTruthy();
+			expect(logger2.suppressErrors).toBeTruthy();
 		});
 
 		it('disables suppression when false', () => {
@@ -396,7 +394,7 @@ describe('LoggerConfiguration', () => {
 				.suppressErrors(false)
 				.create();
 
-			expect(logger.suppressErrors).to.be.false;
+			expect(logger.suppressErrors).toBeFalsy();
 		});
 
 		it('uses the value of the last call', () => {
@@ -408,7 +406,7 @@ describe('LoggerConfiguration', () => {
 				.suppressErrors(false)
 				.create();
 
-			expect(logger.suppressErrors).to.be.false;
+			expect(logger.suppressErrors).toBeFalsy();
 		});
 	});
 
@@ -427,10 +425,10 @@ describe('LoggerConfiguration', () => {
 			logger.info('C is the third letter');
 
 			return logger.flush().then(() => {
-				expect(emittedEvents).to.have.length(3);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'A is the first letter');
-				expect(emittedEvents[1]).to.have.nested.property('messageTemplate.raw', 'B is the second letter');
-				expect(emittedEvents[2]).to.have.nested.property('messageTemplate.raw', 'C is the third letter');
+				expect(emittedEvents).toHaveLength(3);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'A is the first letter');
+				expect(emittedEvents[1]).toHaveProperty('messageTemplate.raw', 'B is the second letter');
+				expect(emittedEvents[2]).toHaveProperty('messageTemplate.raw', 'C is the third letter');
 			});
 		});
 	});

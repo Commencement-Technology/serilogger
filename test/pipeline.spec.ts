@@ -1,8 +1,6 @@
-/// <reference path="../node_modules/@types/node/index.d.ts" />
 /// <reference path="../node_modules/@types/jest/index.d.ts" />
 /// <reference path="../node_modules/typemoq/dist/typemoq.d.ts" />
 
-import { expect } from 'chai';
 import * as TypeMoq from 'typemoq';
 import { LogEvent, LogEventLevel } from '../src/logEvent';
 import { MessageTemplate } from '../src/messageTemplate';
@@ -29,10 +27,10 @@ describe('Pipeline', () => {
 				new LogEvent('', LogEventLevel.information, new MessageTemplate('Message 3'), {})
 			];
 			return pipeline.emit(events).then(() => {
-				expect(emittedEvents).to.have.length(3);
-				expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'Message 1');
-				expect(emittedEvents[1]).to.have.nested.property('messageTemplate.raw', 'Message 2');
-				expect(emittedEvents[2]).to.have.nested.property('messageTemplate.raw', 'Message 3');
+				expect(emittedEvents).toHaveLength(3);
+				expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'Message 1');
+				expect(emittedEvents[1]).toHaveProperty('messageTemplate.raw', 'Message 2');
+				expect(emittedEvents[2]).toHaveProperty('messageTemplate.raw', 'Message 3');
 			});
 		});
 
@@ -56,15 +54,15 @@ describe('Pipeline', () => {
 
 			return pipeline.emit(events.slice(0, 2))
 				.then(() => {
-					expect(emittedEvents).to.have.length(2);
-					expect(emittedEvents[0]).to.have.nested.property('messageTemplate.raw', 'Message 1');
-					expect(emittedEvents[1]).to.have.nested.property('messageTemplate.raw', 'Message 2');
+					expect(emittedEvents).toHaveLength(2);
+					expect(emittedEvents[0]).toHaveProperty('messageTemplate.raw', 'Message 1');
+					expect(emittedEvents[1]).toHaveProperty('messageTemplate.raw', 'Message 2');
 				})
 				.then(() => Promise.all([pipeline.flush(), pipeline.emit(events.slice(2))]))
 				.then(() => {
-					expect(emittedEvents).to.have.length(4);
-					expect(emittedEvents[2]).to.have.nested.property('messageTemplate.raw', 'Message 3');
-					expect(emittedEvents[3]).to.have.nested.property('messageTemplate.raw', 'Message 4');
+					expect(emittedEvents).toHaveLength(4);
+					expect(emittedEvents[2]).toHaveProperty('messageTemplate.raw', 'Message 3');
+					expect(emittedEvents[3]).toHaveProperty('messageTemplate.raw', 'Message 4');
 				});
 		});
 	});
@@ -99,7 +97,7 @@ describe('Pipeline', () => {
 			const flushPromise1 = pipeline.flush();
 			const flushPromise2 = pipeline.flush();
 			return flushPromise1.then(() => {
-				expect(flushPromise2).to.equal(flushPromise1);
+				expect(flushPromise2).toEqual(flushPromise1);
 				pipelineStage2.verify(m => m.flush(), TypeMoq.Times.once());
 			});
 		});

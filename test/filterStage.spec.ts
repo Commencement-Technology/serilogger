@@ -1,8 +1,5 @@
-/// <reference path="../node_modules/@types/node/index.d.ts" />
 /// <reference path="../node_modules/@types/jest/index.d.ts" />
-/// <reference path="../node_modules/typemoq/dist/typemoq.d.ts" />
 
-import { expect } from 'chai';
 import { FilterStage } from '../src/filterStage';
 import { LogEvent, LogEventLevel } from '../src/logEvent';
 import { MessageTemplate } from '../src/messageTemplate';
@@ -18,9 +15,9 @@ describe('FilterStage', () => {
 			new LogEvent('', LogEventLevel.information, new MessageTemplate('C Message 1'), {})
 		];
 		const filteredEvents = filterStage.emit(events);
-		expect(filteredEvents).to.have.length(2);
-		expect(filteredEvents[0]).to.have.nested.property('messageTemplate.raw', 'B Message 1');
-		expect(filteredEvents[1]).to.have.nested.property('messageTemplate.raw', 'B Message 2');
+		expect(filteredEvents).toHaveLength(2);
+		expect(filteredEvents[0]).toHaveProperty('messageTemplate.raw', 'B Message 1');
+		expect(filteredEvents[1]).toHaveProperty('messageTemplate.raw', 'B Message 2');
 	});
 
 	it('does nothing when flushed', () => {

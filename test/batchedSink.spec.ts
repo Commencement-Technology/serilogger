@@ -1,7 +1,6 @@
-/// <reference path="../node_modules/@types/node/index.d.ts" />
+/// <reference path="../node_modules/@types/jest/index.d.ts" />
 /// <reference path="../node_modules/typemoq/dist/typemoq.d.ts" />
 
-import { expect } from 'chai';
 import * as TypeMoq from 'typemoq';
 import { BatchedSink, defaultBatchedSinkOptions } from '../src/batchedSink';
 import { LogEvent, LogEventLevel } from '../src/logEvent';
@@ -14,8 +13,8 @@ describe('BatchedSink', () => {
 			const innerSink = TypeMoq.Mock.ofType(ConcreteSink);
 			const batchedSink = new BatchedSink(innerSink.object);
 
-			expect(batchedSink).to.have.nested.property('options.maxSize', defaultBatchedSinkOptions.maxSize);
-			expect(batchedSink).to.have.nested.property('options.period', defaultBatchedSinkOptions.period);
+			expect(batchedSink).toHaveProperty('options.maxSize', defaultBatchedSinkOptions.maxSize);
+			expect(batchedSink).toHaveProperty('options.period', defaultBatchedSinkOptions.period);
 
 			batchedSink.stopCycle();
 		});
@@ -27,8 +26,8 @@ describe('BatchedSink', () => {
 				period: 2
 			});
 
-			expect(batchedSink).to.have.nested.property('options.maxSize', 50);
-			expect(batchedSink).to.have.nested.property('options.period', 2);
+			expect(batchedSink).toHaveProperty('options.maxSize', 50);
+			expect(batchedSink).toHaveProperty('options.period', 2);
 
 			batchedSink.stopCycle();
 		});
@@ -84,12 +83,12 @@ describe('BatchedSink', () => {
 			]);
 
 			return batchedSink.flush().then(() => {
-				expect(emittedBatches[0]).to.have.length(3);
-				expect(emittedBatches[1]).to.have.length(3);
-				expect(emittedBatches[1][2]).to.have.nested.property('messageTemplate.raw', 'Test 6');
-				expect(emittedBatches[2]).to.have.length(3);
-				expect(emittedBatches[3]).to.have.length(2);
-				expect(emittedBatches[3][1]).to.have.nested.property('messageTemplate.raw', 'Test 11');
+				expect(emittedBatches[0]).toHaveLength(3);
+				expect(emittedBatches[1]).toHaveLength(3);
+				expect(emittedBatches[1][2]).toHaveProperty('messageTemplate.raw', 'Test 6');
+				expect(emittedBatches[2]).toHaveLength(3);
+				expect(emittedBatches[3]).toHaveLength(2);
+				expect(emittedBatches[3][1]).toHaveProperty('messageTemplate.raw', 'Test 11');
 
 				batchedSink.stopCycle();
 			});
@@ -118,9 +117,9 @@ describe('BatchedSink', () => {
 						new LogEvent('', LogEventLevel.information, new MessageTemplate('Test 6'))
 					]);
 
-					expect(emittedBatches).to.have.length(1);
-					expect(emittedBatches[0]).to.have.length(3);
-					expect(emittedBatches[0][1]).to.have.nested.property('messageTemplate.raw', 'Test 2');
+					expect(emittedBatches).toHaveLength(1);
+					expect(emittedBatches[0]).toHaveLength(3);
+					expect(emittedBatches[0][1]).toHaveProperty('messageTemplate.raw', 'Test 2');
 
 					batchedSink.stopCycle();
 
@@ -156,8 +155,8 @@ describe('BatchedSink', () => {
 			]);
 
 			return sink.flush().then(() => {
-				expect(emitCoreCalled).to.equal(2);
-				expect(flushCoreCalled).to.equal(1);
+				expect(emitCoreCalled).toEqual(2);
+				expect(flushCoreCalled).toEqual(1);
 
 				sink.stopCycle();
 			});
@@ -180,7 +179,7 @@ describe('BatchedSink', () => {
 			const sink = new DerivedSink();
 
 			const flushPromise = sink.flush();
-			expect(flushPromise).to.be.instanceOf(Promise);
+			expect(flushPromise).toBeInstanceOf(Promise);
 
 			sink.stopCycle();
 
@@ -221,8 +220,8 @@ describe('BatchedSink', () => {
 			});
 
 			return batchedSink.flush().then(() => {
-				expect(emittedBatches[0][0]).to.have.nested.property('messageTemplate.raw', 'Test 1');
-				expect(emittedBatches[0][1]).to.have.nested.property('messageTemplate.raw', 'Test 2');
+				expect(emittedBatches[0][0]).toHaveProperty('messageTemplate.raw', 'Test 1');
+				expect(emittedBatches[0][1]).toHaveProperty('messageTemplate.raw', 'Test 2');
 
 				batchedSink.stopCycle();
 			});
@@ -241,7 +240,7 @@ describe('BatchedSink', () => {
 				new LogEvent('', LogEventLevel.information, new MessageTemplate('Test 2'))
 			]);
 
-			expect(durableStore.length).to.equal(1);
+			expect(durableStore.length).toEqual(1);
 
 			batchedSink.stopCycle();
 		});
@@ -262,7 +261,7 @@ describe('BatchedSink', () => {
 			]);
 
 			return batchedSink.flush().then(() => {
-				expect(durableStore.length).to.equal(0);
+				expect(durableStore.length).toEqual(0);
 
 				batchedSink.stopCycle();
 			});
